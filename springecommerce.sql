@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 06, 2023 at 03:58 AM
+-- Generation Time: Apr 24, 2023 at 04:52 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -21,10 +21,6 @@ SET time_zone = "+00:00";
 -- Database: `springecommerce`
 --
 
-DROP DATABASE IF EXISTS springecommerce;
-CREATE DATABASE IF NOT EXISTS springecommerce;
-USE springecommerce;
-
 -- --------------------------------------------------------
 
 --
@@ -34,7 +30,7 @@ USE springecommerce;
 CREATE TABLE `account` (
   `id` int(11) NOT NULL,
   `username` varchar(25) NOT NULL,
-  `password` varchar(25) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `role` varchar(10) NOT NULL,
   `permission` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -44,8 +40,10 @@ CREATE TABLE `account` (
 --
 
 INSERT INTO `account` (`id`, `username`, `password`, `role`, `permission`) VALUES
-(1, 'adminjava', '123123', 'Admin', 2),
-(2, 'temp', '123123', 'User', 1);
+(2, 'temp', '$2a$10$3c41r5JttChUtSA3MZEm/eUkIlAMPp2ekXn9h0j3isf2JR/2TRopu', 'User', 1),
+(9, 'tzy', '$2a$10$vrJHt0B5.PWygC8NcSS9s.L1PN3OMPRcdoUcGrhQSzUIkJyE0YJy.', 'USER', 1),
+(10, 'adminjava', '$2a$10$3c41r5JttChUtSA3MZEm/eUkIlAMPp2ekXn9h0j3isf2JR/2TRopu', 'Admin', 2),
+(11, 'vyvy', '$2a$10$CDUXABmElV5tI5VJHV0Nd.WtJ/xNX9rsA.RU.MX0imo5AHd2EqHTi', 'USER', 1);
 
 -- --------------------------------------------------------
 
@@ -65,7 +63,10 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`id`, `customer_id`, `status`, `total_amount`) VALUES
-(1, 1, 0, 0);
+(1, 1, 0, 53000),
+(7, 7, 0, 0),
+(8, 8, 0, 0),
+(9, 9, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -81,6 +82,13 @@ CREATE TABLE `cartdetail` (
   `price` int(11) NOT NULL,
   `amount` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cartdetail`
+--
+
+INSERT INTO `cartdetail` (`id`, `cart_id`, `product_id`, `quantity`, `price`, `amount`) VALUES
+(1, 1, 2, 1, 53000, 53000);
 
 -- --------------------------------------------------------
 
@@ -124,7 +132,10 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`id`, `account_id`, `name`, `last_active`) VALUES
-(1, 2, 'temp', '2023-04-05');
+(1, 2, 'temp', '2023-04-05'),
+(7, 9, 'vyvy', '2023-04-24'),
+(8, 10, 'admin', '2023-04-24'),
+(9, 11, 'Huỳnh Nguyễn Tường Vy', '2023-04-24');
 
 -- --------------------------------------------------------
 
@@ -247,6 +258,37 @@ INSERT INTO `product` (`id`, `category_id`, `feature_id`, `name`, `image`, `quan
 (40, 4, 7, 'Natrol CetylPure', 'natrol_cetypure.png', 25, 35000, 'Bottle', 'Natrol CetylPure is a dietary supplement that contains cetyl myristoleate, a fatty acid that may help reduce joint pain and inflammation.'),
 (41, 4, 7, 'CLA Core', 'cla_core.png', 50, 88000, 'Bottle', 'CLA Core is a dietary supplement that contains conjugated linoleic acid (CLA), which may help reduce body fat and increase lean muscle mass.');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `roles`
+--
+
+CREATE TABLE `roles` (
+  `id` int(11) NOT NULL,
+  `username` varchar(255) DEFAULT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `roles`
+--
+
+INSERT INTO `roles` (`id`, `username`, `name`) VALUES
+(1, 'Admin', ''),
+(2, 'User', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_roles`
+--
+
+CREATE TABLE `users_roles` (
+  `user_id` int(11) NOT NULL,
+  `role_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -307,6 +349,19 @@ ALTER TABLE `product`
   ADD KEY `fk_feature_id` (`feature_id`);
 
 --
+-- Indexes for table `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users_roles`
+--
+ALTER TABLE `users_roles`
+  ADD KEY `FKj6m8fwv7oqv74fcehir1a9ffy` (`role_id`),
+  ADD KEY `FKof81i1vmn68iwpcfi6ex5o7w4` (`user_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -314,19 +369,19 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `cartdetail`
 --
 ALTER TABLE `cartdetail`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `category`
@@ -338,7 +393,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `feature`
@@ -357,6 +412,12 @@ ALTER TABLE `orders`
 --
 ALTER TABLE `product`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+
+--
+-- AUTO_INCREMENT for table `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
@@ -393,6 +454,13 @@ ALTER TABLE `orders`
 ALTER TABLE `product`
   ADD CONSTRAINT `fk_category_id` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`),
   ADD CONSTRAINT `fk_feature_id` FOREIGN KEY (`feature_id`) REFERENCES `feature` (`id`);
+
+--
+-- Constraints for table `users_roles`
+--
+ALTER TABLE `users_roles`
+  ADD CONSTRAINT `FKj6m8fwv7oqv74fcehir1a9ffy` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`),
+  ADD CONSTRAINT `FKof81i1vmn68iwpcfi6ex5o7w4` FOREIGN KEY (`user_id`) REFERENCES `account` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -29,7 +29,7 @@ public class RouteController {
     @Autowired
     private OrdersService ordersService;
 
-    @GetMapping("/home")
+    @GetMapping("/")
     public String shopIndexPage(HttpSession session) {
         Customer currentCustomer = (Customer) session.getAttribute("customer");
         if (session.getAttribute("totalQuantity") == null || currentCustomer == null) {

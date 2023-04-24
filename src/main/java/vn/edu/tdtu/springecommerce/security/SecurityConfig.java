@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 public class SecurityConfig {
     @Bean
     public static PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(10);
     }
 
     @Bean
@@ -25,6 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/register/**").permitAll()
                         .requestMatchers("/api/account/**").permitAll()
                         .requestMatchers("/login/**").permitAll()
+                        .requestMatchers("/**").permitAll()
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()

@@ -10,4 +10,5 @@ public interface AccountService {
     Account findByUsername(String username);
     Account findByUsernameAndPassword(String username, String password);
     void updatePermit(int accountId, int permission);
+    Account login(String username,String password);
 }

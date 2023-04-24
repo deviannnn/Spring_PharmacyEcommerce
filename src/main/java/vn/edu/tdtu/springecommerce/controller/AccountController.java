@@ -69,7 +69,7 @@ public class AccountController {
             model.addFlashAttribute("loginFail", "Sorry. Information is incomplete.");
             return "redirect:/login";
         }
-        Account loginAccount = accountService.findByUsernameAndPassword(username, password);
+        Account loginAccount = accountService.login(username, password);
         if (loginAccount == null) {
             model.addFlashAttribute("loginFail", "Sorry. Username or password didn't correct.");
             return "redirect:/login";
