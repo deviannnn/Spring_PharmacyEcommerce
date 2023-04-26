@@ -1,24 +1,22 @@
 package vn.edu.tdtu.springecommerce.controller;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.tdtu.springecommerce.model.Account;
-import vn.edu.tdtu.springecommerce.model.Cart;
 import vn.edu.tdtu.springecommerce.model.Customer;
 import vn.edu.tdtu.springecommerce.service.AccountService;
-import vn.edu.tdtu.springecommerce.service.CartService;
 import vn.edu.tdtu.springecommerce.service.CustomerService;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import vn.edu.tdtu.springecommerce.service.EmailService;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/api/account")
@@ -27,7 +25,9 @@ public class AccountController {
     private AccountService accountService;
     @Autowired
     private CustomerService customerService;
-    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
+
     @GetMapping(produces = "application/json")
     @ResponseBody
     public List<Customer> listAllCustomer() {
@@ -36,7 +36,8 @@ public class AccountController {
 
     @PostMapping("/register")
     public String register(@RequestParam("name") String name, @RequestParam("username") String username,
-                           @RequestParam("password") String password, @RequestParam("repassword") String repassword, RedirectAttributes model) {
+                           @RequestParam("password") String password, @RequestParam("repassword") String repassword,
+                           HttpSession session, RedirectAttributes model) {
         model.addFlashAttribute("name", name);
         model.addFlashAttribute("username", username);
         model.addFlashAttribute("password", password);
@@ -54,11 +55,41 @@ public class AccountController {
             model.addFlashAttribute("registerFail", "Sorry. Confirm password didn't correct.");
             return "redirect:/register";
         } else {
-            accountService.register(username, password, name);
-            model.addFlashAttribute("registerSuccess", "Congratulations, you have successfully registered");
+            String code = UUID.randomUUID().toString();
+            session.setAttribute("name", name);
+            session.setAttribute("username", username);
+            session.setAttribute("password", password);
+            session.setAttribute("code", code);
+            String link = "http://localhost:8080/api/account/verify?code=" + code;
+            String message = "Hi " + name + ", here is the confirmation link to register your account: " + link;
+            emailService.sendEmail(username, "Confirm Register", message);
+            model.addFlashAttribute("registerSuccess", "A confirmation link has been sent to your email. Please confirm to register your account!");
             return "redirect:/login";
         }
     }
+
+    @GetMapping("/verify")
+    public String verify(@RequestParam("code") String code, HttpSession session, Model model) {
+        if (code == null || code.isEmpty()) {
+            model.addAttribute("registerFail", "Sorry. Invalid verification code.");
+            return "notice";
+        } else if (!code.equals(session.getAttribute("code"))) {
+            model.addAttribute("registerFail", "Sorry. Invalid verification code.");
+            return "notice";
+        } else {
+            String name = (String) session.getAttribute("name");
+            String username = (String) session.getAttribute("username");
+            String password = (String) session.getAttribute("password");
+            model.addAttribute("registerSuccess", "Congratulations, you have successfully registered");
+            accountService.register(username, password, name);
+            session.removeAttribute("name");
+            session.removeAttribute("username");
+            session.removeAttribute("password");
+            session.removeAttribute("code");
+            return "notice";
+        }
+    }
+
 
     @PostMapping("/login")
     public String login(@RequestParam("username") String username, @RequestParam("password") String password,

@@ -46,19 +46,7 @@ public class OrdersController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Sorry. You cannot access the shopping cart feature.");
         }
         ordersService.addOrder(order, currentCustomer, session);
-        return ResponseEntity.status(HttpStatus.OK).body("Order placed successfully.");
-    }
-
-    // ADD ONE PRODUCT
-    @PostMapping(path = "/add/v2", produces = "application/json")
-    @ResponseBody
-    public ResponseEntity<Orders> addOrders(@ModelAttribute("order") Orders order, @RequestParam("customerId") int customerId) {
-        try {
-            Orders addedOrder = ordersService.addOrder(order, customerId);
-            return ResponseEntity.ok(addedOrder);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.status(HttpStatus.OK).body("A confirmation link has been sent to your email. Please confirm to place your order!");
     }
 
 

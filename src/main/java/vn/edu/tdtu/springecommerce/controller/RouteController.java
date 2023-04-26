@@ -9,8 +9,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.edu.tdtu.springecommerce.model.*;
 import vn.edu.tdtu.springecommerce.service.*;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -18,10 +16,6 @@ import java.util.List;
 public class RouteController {
     @Autowired
     private ProductService productService;
-    @Autowired
-    private AccountService accountService;
-    @Autowired
-    private CustomerService customerService;
     @Autowired
     private CartService cartService;
     @Autowired

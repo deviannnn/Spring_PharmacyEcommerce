@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface OrdersService {
     void addOrder(Orders order, Customer currentCustomer, HttpSession session);
-    Orders addOrder(Orders order, int customerId);
     void updateOrder(int orderId, Orders order);
     Orders findById(int ordersId);
     List<Orders> findAllOrderPlaced();

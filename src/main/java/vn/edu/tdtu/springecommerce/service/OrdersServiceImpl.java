@@ -50,30 +50,6 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
     @Override
-    public Orders addOrder(Orders order, int customerId) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        String formattedDate = formatter.format(date);
-
-        Cart currentCart = cartRepository.findByCustomer_IdAndStatus(customerId, 0).get(0);
-
-        order.setCart(currentCart);
-        order.setDateCreated(formattedDate);
-        order.setStatus(1); // order is set waiting status
-        ordersRepository.save(order); // create new order
-
-        currentCart.setStatus(1); // update current cart has been done status
-
-        Cart newCart = new Cart(); // create new cart for this customer
-        newCart.setStatus(0); // cart is set shopping status
-        newCart.setTotalAmount(0);
-        newCart.setCustomer(customerRepositoy.findById(customerId));
-        cartRepository.save(newCart);
-
-        return order;
-    }
-
-    @Override
     public void updateOrder(int orderId, Orders order) {
         Orders updatedOrder = ordersRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Order with id " + orderId + " not found"));
         updateOrderInfo(updatedOrder, order);

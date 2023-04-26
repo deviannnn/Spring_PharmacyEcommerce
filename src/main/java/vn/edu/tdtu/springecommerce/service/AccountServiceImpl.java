@@ -34,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
     public void register(String username, String password, String name) {
         Account accountItem = new Account();
         accountItem.setUsername(username);
-        String encodePass=passwordEncoder.encode(password);
+        String encodePass = passwordEncoder.encode(password);
         accountItem.setPassword(encodePass);
         accountItem.setPermission(1);
         accountItem.setRole("USER");
