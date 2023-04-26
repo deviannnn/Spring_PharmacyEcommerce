@@ -80,6 +80,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-5 mr-auto">
+                        <span class="tag" th:if="${product.quantity == 0}">Out of stock</span>
                         <div class="border text-center">
                             <img th:src="@{'/images/' + ${product.image}}" alt="Image" class="img-fluid p-5">
                         </div>
@@ -103,12 +104,14 @@
                             </div>
 
                         </div>
-                        <p>
+                        <p th:if="${product.quantity != 0}">
                             <a th:href="@{/api/cart/add/{productId}/{quantity}(productId=${product.id}, quantity=1)}"
                                th:data-product-id="${product.id}"
                                class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary js-btn-add">Add To Cart</a>
                         </p>
-
+                        <p th:if="${product.quantity == 0}">
+                            <a class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary">Out of stock</a>
+                        </p>
                     </div>
                 </div>
             </div>

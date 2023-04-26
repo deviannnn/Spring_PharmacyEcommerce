@@ -311,10 +311,15 @@
                         productSpace.empty();
                         $.each(data, function(index, product) {
                             var productHtml = '<div class="col-sm-6 col-lg-4 text-center item mb-4">';
+                            if (product.quantity === 0) {
+                                productHtml += '<span class="tag">Out of stock</span>';
+                            }
                             productHtml += '<a href="/product-detail/'+product.id+'"><img src="/images/' + product.image + '" alt="Image" style="width: 270px; height: 370px"></a>';
                             productHtml += '<h3 class="text-dark" style="font-size: 23px"><a href="/product-detail/'+product.id+'">' + product.name + '</a></h3>';
                             productHtml += '<p class="price">' + product.price + ' VND</p>';
-                            productHtml += '<p><a href="/api/cart/add/' + product.id + '/1" class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary">Add To Cart</a></p>';
+                            if (product.quantity !== 0) {
+                                productHtml += '<p><a href="/api/cart/add/' + product.id + '/1" class="buy-now btn btn-sm height-auto px-4 py-3 btn-primary">Add To Cart</a></p>';
+                            }
                             productHtml += '</div>';
                             productSpace.append(productHtml);
                         });
