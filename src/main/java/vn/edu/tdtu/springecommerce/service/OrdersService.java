@@ -7,7 +7,7 @@ import vn.edu.tdtu.springecommerce.model.Orders;
 import java.util.List;
 
 public interface OrdersService {
-    void addOrder(Orders order, Customer currentCustomer, HttpSession session);
+    void addOrder(Orders order, Customer currentCustomer);
     void updateOrder(int orderId, Orders order);
     Orders findById(int ordersId);
     List<Orders> findAllOrderPlaced();

@@ -4,10 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.tdtu.springecommerce.model.*;
-import vn.edu.tdtu.springecommerce.repository.CartDetailRepository;
-import vn.edu.tdtu.springecommerce.repository.CartRepository;
-import vn.edu.tdtu.springecommerce.repository.CustomerRepositoy;
-import vn.edu.tdtu.springecommerce.repository.OrdersRepository;
+import vn.edu.tdtu.springecommerce.repository.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,29 +21,28 @@ public class OrdersServiceImpl implements OrdersService {
     CartDetailRepository cartDetailRepository;
     @Autowired
     CustomerRepositoy customerRepositoy;
+    @Autowired
+    ProductRepository productRepository;
 
     @Override
-    public void addOrder(Orders order, Customer currentCustomer, HttpSession session) {
+    public void addOrder(Orders order, Customer currentCustomer) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
         String formattedDate = formatter.format(date);
 
         Cart currentCart = cartRepository.findByCustomer_IdAndStatus(currentCustomer.getId(), 0).get(0);
+        currentCart.setStatus(1); // update current cart has been done status
 
         order.setCart(currentCart);
         order.setDateCreated(formattedDate);
         order.setStatus(1); // order is set waiting status
         ordersRepository.save(order); // create new order
 
-        currentCart.setStatus(1); // update current cart has been done status
-
         Cart newCart = new Cart(); // create new cart for this customer
         newCart.setStatus(0); // cart is set shopping status
         newCart.setTotalAmount(0);
         newCart.setCustomer(currentCustomer);
         cartRepository.save(newCart);
-
-        session.setAttribute("totalQuantity", 0);
     }
 
     @Override
@@ -108,5 +104,12 @@ public class OrdersServiceImpl implements OrdersService {
         Orders orderStatusUpdate = ordersRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Order with id " + orderId + " not found"));
         orderStatusUpdate.setStatus(status);
         ordersRepository.save(orderStatusUpdate);
+        if (status == 2) {
+            for (CartDetail item : orderStatusUpdate.getCartDetails()) {
+                Product productTrigger = item.getProduct();
+                productTrigger.setQuantity(productTrigger.getQuantity() - item.getQuantity());
+                productRepository.save(productTrigger);
+            }
+        }
     }
 }

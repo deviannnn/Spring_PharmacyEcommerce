@@ -45,8 +45,9 @@ public class OrdersController {
         if (currentCustomer == null || currentCustomer.getAccount().getPermission() != 1) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Sorry. You cannot access the shopping cart feature.");
         }
-        ordersService.addOrder(order, currentCustomer, session);
-        return ResponseEntity.status(HttpStatus.OK).body("A confirmation link has been sent to your email. Please confirm to place your order!");
+        ordersService.addOrder(order, currentCustomer);
+        session.setAttribute("totalQuantity", 0);
+        return ResponseEntity.status(HttpStatus.OK).body("Order placed successfully.");
     }
 
 
