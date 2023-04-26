@@ -128,7 +128,7 @@
                 <table class="table mt-3">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>No.</th>
                             <th>Name</th>
                             <th>Category</th>
                             <th>Feature</th>
@@ -321,7 +321,7 @@
                         tbody.empty();
                         $.each(data, function(index, product) {
                             var tr = $('<tr>');
-                            tr.append('<td>' + product.id + '</td>');
+                            tr.append('<td>' + (parseInt(index)+1).toString() + '</td>');
                             tr.append('<td>' + product.name + '</td>');
                             tr.append('<td>' + product.category.name + '</td>');
                             tr.append('<td>' + product.feature.name + '</td>');
