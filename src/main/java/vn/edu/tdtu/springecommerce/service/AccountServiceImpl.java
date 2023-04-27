@@ -62,11 +62,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account findByUsernameAndPassword(String username, String password) {
-        return accountRepository.findByUsernameAndPassword(username, password);
-    }
-
-    @Override
     public void updatePermit(int accountId, int permission) {
         Account updatedAccount = accountRepository.findById(accountId);
         updatedAccount.setPermission(permission);
@@ -75,12 +70,15 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account login(String username,String password) {
-        Account account=accountRepository.findByUsername(username);
-        String accountPassword=account.getPassword();
-        boolean isPasswordMatch=passwordEncoder.matches(password,accountPassword);
-        if(isPasswordMatch){
+        Account account = accountRepository.findByUsername(username);
+        if (account == null) { return null; }
+        String accountPassword = account.getPassword();
+        boolean isPasswordMatch = passwordEncoder.matches(password, accountPassword);
+        if (isPasswordMatch) {
             return account;
         }
-        return null;
+        else {
+            return null;
+        }
     }
 }
