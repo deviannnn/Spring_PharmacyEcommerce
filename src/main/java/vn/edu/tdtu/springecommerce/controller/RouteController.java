@@ -88,7 +88,10 @@ public class RouteController {
             return "redirect:/";
         }
         Cart currentCart = cartService.findByCustomer_IdAndStatus(currentCustomer.getId(), 0).get(0);
-
+        if (currentCart.getTotalAmount() == 0) {
+            redirectModel.addFlashAttribute("addCartWarning", "Sorry. There's nothing to place order.");
+            return "redirect:/";
+        }
         List<CartDetail> listCartDetail = cartDetailService.findByCart_Id(currentCart.getId());
         model.addAttribute("listCartDetail", listCartDetail);
         model.addAttribute("totalAmount", currentCart.getTotalAmount());
