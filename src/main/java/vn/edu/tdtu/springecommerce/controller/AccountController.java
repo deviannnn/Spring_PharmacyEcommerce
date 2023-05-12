@@ -1,7 +1,6 @@
 package vn.edu.tdtu.springecommerce.controller;
 
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,7 +41,7 @@ public class AccountController {
         model.addFlashAttribute("username", username);
         model.addFlashAttribute("password", password);
         model.addFlashAttribute("repassword", repassword);
-        if (name == "" || username == "" || password == "" || repassword == "") {
+        if (name.equals("") || username.equals("") || password.equals("") || repassword.equals("")) {
             model.addFlashAttribute("registerFail", "Sorry. Information is incomplete.");
             return "redirect:/register";
         } else if (accountService.findByUsername(username) != null) {
@@ -96,7 +95,7 @@ public class AccountController {
                         RedirectAttributes model, HttpSession session) {
         model.addFlashAttribute("username", username);
         model.addFlashAttribute("password", password);
-        if (username == "" || password == "") {
+        if (username.equals("") || password.equals("")) {
             model.addFlashAttribute("loginFail", "Sorry. Information is incomplete.");
             return "redirect:/login";
         }
